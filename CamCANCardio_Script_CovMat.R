@@ -6,21 +6,20 @@
 # This script produces key analyses for the paper
 
 # Fuhrmann, D., Nesbitt, D., Shafto, M., Rowe, J., Price, D., Gadie, A., 
-#    Cam-CAN & Kievit, R. A.(submitted). Cardiovascular risk factors for micro- 
-#    and macro-structural brain changes in healthy ageing.
+#    Cam-CAN & Kievit, R. A.(2018). Strong and specific associations between 
+#    cardiovascular risk factors and brain white matter microstructure- and 
+#    macrostructure in healthy aging. Neuobiology of Aging, 
+#    doi: 10.1016/j.neurobiolaging.2018.10.005
 
 # The script uses the covariance matrix. Estimates and test statistics will differ 
-# somewhat from values reported in the paper. To reproduce results exactly, please 
-# request raw data from https://camcan-archive.mrc-cbu.cam.ac.uk/dataaccess/
+# somewhat from values reported in the paper because of missingness. To reproduce 
+# results exactly, please request raw data from 
+# https://camcan-archive.mrc-cbu.cam.ac.uk/dataaccess/
 
 # Script author: Delia Fuhrmann, January 2017, using RStudio 1.0.143 and R 
 # version 3.4.0 (You Stupid Darkness)
 
 ################################################################################
-
-### Preamble
-
-rm(list=ls()) # clear all
 
 ### Load lavaan
 # install.packages("lavaan") # this only needs to be done once
@@ -32,7 +31,6 @@ cov.matrix = read.csv("CamCANCardio_CovarianceMatrix.csv", row.names = 1)
 ################################################################################
 
 ### Measuremment model of cardiovascular health
-
 model_ThreeFactor<-
   '
 # LVs
@@ -42,14 +40,13 @@ HR  =~ pulse1  + pulse2  + pulse3
 '
 
 fit_ThreeFactor <- cfa(model_ThreeFactor, sample.cov=as.matrix(cov.matrix), 
-                       sample.nobs=579, std.lv=T)
+                       sample.nobs=667, std.lv=T)
 
 summary(fit_ThreeFactor, standardized=T, rsquare=T, fit.measures=T)
 
 ################################################################################
 
 ### Model of of cardiovascular health and lesion burden
-
 model_lesion <-
   '
 # LVs
@@ -73,7 +70,6 @@ summary(fit_lesion, standardized=T, rsquare=T, fit.measures=T)
 ################################################################################
 
 ### Model of of cardiovascular health and white matter microstructure (here MD)
-
 model_MD <-
   '
 # LVs
@@ -97,7 +93,7 @@ md_ILF  ~ DBP + SBP + HR + age
 age ~~ DBP + SBP + HR
 '
 
-fit_MD <- sem(model_MD, sample.cov=as.matrix(cov.matrix), sample.nobs=646, std.lv=T)
+fit_MD <- sem(model_MD, sample.cov=as.matrix(cov.matrix), sample.nobs=667, std.lv=T)
 
 summary(fit_MD, standardized=T, rsquare=T, fit.measures=T)
 
